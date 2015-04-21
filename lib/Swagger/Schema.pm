@@ -1,21 +1,44 @@
+use Moose::Util::TypeConstraints;
+
+subtype 'Swagger::Schema::SwaggerVersion', as 'Str', where { $_ eq '2.0' };
+subtype 'Swagger::Schema::BasePath', as 'Str', where { $_ =~ /^\// };
+
 package Swagger::Schema {
   use MooseX::DataModel;
 
-  key swagger => (isa => 'Str', required => 1); #Must be '2.0'
+  key swagger => (isa => 'Swagger::Schema::SwaggerVersion', required => 1);
   key info => (isa => 'Swagger::Schema::Info', required => 1);
   key host => (isa => 'Str'); #MAY contain a port
-  key basePath => (isa => 'Str'); #Must start with leading slash
+  key basePath => (isa => 'Swagger::Schema::BasePath'); #Must start with leading slash
   array schemes => (isa => 'Str'); #Strs must be http https ws wss
   array consumes => (isa => 'Str'); #Str must be mime type: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#mimeTypes
   array produces => (isa => 'Str');
-  key paths => (isa => 'Swagger::Schema::Paths');
-  #key definitions => (isa => 'Swagger::Schema::Definition');
+  #key paths => (isa => 'Swagger::Schema::Paths');
+  object definitions => (isa => 'Swagger::Schema::SchemaObject');
   #key parameters => (isa => 'Swagger::Schema::Parameter');
   #key responses => (isa => 'Swagger::Schema::Response');
   #key securityDefinitions => (isa => 'Swagger::Schema::Security');
   #key security => (isa => 'ArrayRef[Str]');
   array tags => (isa => 'Swagger::Schema::Tag');
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');    
+}
+
+package Swagger::Schema::Tag {
+  use MooseX::DataModel;
+  key name => (isa => 'Str');
+  key description => (isa => 'Str');
+  key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');
+}
+
+package Swagger::Schema::SchemaObject {
+  use MooseX::DataModel;
+  key format => (isa => 'Str');
+  key title => (isa => 'Str');
+  key description => (isa => 'Str');
+  key default => (isa => 'Str');
+  key multipleOf => (isa => 'Int');
+  key maximum => (isa => 'Num');
+  key exclusiveMaximum => (isa => 'Num');
 }
 
 package Swagger::Schema::Operation {
@@ -53,8 +76,8 @@ package Swagger::Schema::Info {
   key description => (isa => 'Str');
   key termsOfService => (isa => 'Str');
   key contact => (isa => 'Swagger::Schema::Contact');
-  key license => (isa => 'Swagger::Schema::Info');
-  key version => (isa => 'Str');
+  key license => (isa => 'Swagger::Schema::License');
+  key version => (isa => 'Str', required => 1);
   #TODO: x-^ extensions
 }
 

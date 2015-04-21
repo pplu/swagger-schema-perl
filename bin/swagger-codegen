@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+use Swagger::Schema;
+use File::Slurp;
+
+my $file = shift or die "Usage: $0 JSON_FILE TEMPLATE";
+my $template = shift or die "Usage: $0 JSON_FILE TEMPLATE";
+
+my $json = read_file($file);
+my $model = Swagger::Schema->new_from_json($json);
+
+use Data::Printer;
+p $model;
