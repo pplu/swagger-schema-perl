@@ -1,16 +1,13 @@
 use Moose::Util::TypeConstraints;
 
-subtype 'Swagger::Schema::SwaggerVersion', as 'Str', where { $_ eq '2.0' };
-subtype 'Swagger::Schema::BasePath', as 'Str', where { $_ =~ /^\// };
-
 package Swagger::Schema {
   use MooseX::DataModel;
 
-  key swagger => (isa => 'Swagger::Schema::SwaggerVersion', required => 1);
+  key swagger => (isa => enum([ '2.0' ]), required => 1);
   key info => (isa => 'Swagger::Schema::Info', required => 1);
   key host => (isa => 'Str'); #MAY contain a port
-  key basePath => (isa => 'Swagger::Schema::BasePath'); #Must start with leading slash
-  array schemes => (isa => 'Str'); #Strs must be http https ws wss
+  key basePath => (isa => subtype(as 'Str', where { $_ =~ /^\// }));
+  array schemes => (isa => enum([ 'http', 'https', 'ws', 'wss']));
   array consumes => (isa => 'Str'); #Str must be mime type: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#mimeTypes
   array produces => (isa => 'Str');
   #key paths => (isa => 'Swagger::Schema::Paths');
@@ -73,7 +70,7 @@ package Swagger::Schema::ExternalDocumentation {
 package Swagger::Schema::Info {
   use MooseX::DataModel;
   key title => (isa => 'Str', required => 1);
-  key description => (isa => 'Str');
+  key description => (isa => 'Str'); #Can contain GFM
   key termsOfService => (isa => 'Str');
   key contact => (isa => 'Swagger::Schema::Contact');
   key license => (isa => 'Swagger::Schema::License');
