@@ -1,5 +1,15 @@
 use Moose::Util::TypeConstraints;
 
+coerce 'Swagger::Schema::Parameter',
+  from 'HashRef',
+   via {
+     if ($_->{ in } eq 'body') {
+       return Swagger::Schema::BodyParameter->new($_);
+     } else {
+       return Swagger::Schema::OtherParameter->new($_);
+     }
+   };
+
 package Swagger::Schema {
   use MooseX::DataModel;
 
@@ -10,14 +20,26 @@ package Swagger::Schema {
   array schemes => (isa => enum([ 'http', 'https', 'ws', 'wss']));
   array consumes => (isa => 'Str'); #Str must be mime type: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#mimeTypes
   array produces => (isa => 'Str');
-  #key paths => (isa => 'Swagger::Schema::Paths');
-  object definitions => (isa => 'Swagger::Schema::SchemaObject');
-  #key parameters => (isa => 'Swagger::Schema::Parameter');
+  key paths => (isa => 'Swagger::Schema::Path', required => 1);
+  object definitions => (isa => 'Swagger::Schema::Schema');
+  key parameters => (isa => 'Swagger::Schema::Parameter');
   #key responses => (isa => 'Swagger::Schema::Response');
   #key securityDefinitions => (isa => 'Swagger::Schema::Security');
   #key security => (isa => 'ArrayRef[Str]');
   array tags => (isa => 'Swagger::Schema::Tag');
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');    
+}
+
+package Swagger::Schema::Path {
+  use MooseX::DataModel;
+  key get => (isa => 'Swagger::Schema::Operation');
+  key put => (isa => 'Swagger::Schema::Operation');
+  key post => (isa => 'Swagger::Schema::Operation');
+  key delete => (isa => 'Swagger::Schema::Operation');
+  key options => (isa => 'Swagger::Schema::Operation');
+  key head => (isa => 'Swagger::Schema::Operation');
+  key patch => (isa => 'Swagger::Schema::Operation');
+  #array parameters => (isa => 'Swagger::Schema::Parameter|Swagger::Schema::Ref');
 }
 
 package Swagger::Schema::Tag {
@@ -27,15 +49,82 @@ package Swagger::Schema::Tag {
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');
 }
 
-package Swagger::Schema::SchemaObject {
+enum 'Swagger::Schema::ParameterTypes',
+     [qw/string number integer boolean array file/];
+
+package Swagger::Schema::Schema {
   use MooseX::DataModel;
+
+  key ref => (isa => 'Str', location => '$ref');
+
+  key type => (isa => 'Swagger::Schema::ParameterTypes');
   key format => (isa => 'Str');
-  key title => (isa => 'Str');
+  key allowEmptyValue => (isa => 'Bool');
+  #array items
+  key collectionFormat => (isa => 'Str');
+  key default => (isa => 'Any');
+  key maximum => (isa => 'Int');
+  key exclusiveMaximum => (isa => 'Int');
+  key minimum => (isa => 'Int');
+  key exclusiveMinumum => (isa => 'Int');
+  key maxLength => (isa => 'Int');
+  key minLength => (isa => 'Int');
+  key pattern => (isa => 'Str');
+  key maxItems => (isa => 'Int');
+  key minItems => (isa => 'Int');
+  key uniqueItems => (isa => 'Bool');
+  array enum => (isa => 'Any');
+  key multipleOf => (isa => 'Num');
+  #x-^ patterned fields
+
+  key items => (isa => 'Str');
+  key readOnly => (isa => 'Bool');
+  #key xml => (isa => 'Swagger::Schema::XML');
+  key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');
+  key example => (isa => 'Any');
+
+  no MooseX::DataModel;
+}
+
+package Swagger::Schema::Parameter {
+  use MooseX::DataModel;
+  key name => (isa => 'Str');
+  key in => (isa => 'Str');
   key description => (isa => 'Str');
-  key default => (isa => 'Str');
-  key multipleOf => (isa => 'Int');
-  key maximum => (isa => 'Num');
-  key exclusiveMaximum => (isa => 'Num');
+  key required => (isa => 'Bool');
+}
+
+package Swagger::Schema::BodyParameter {
+  use MooseX::DataModel;
+  extends 'Swagger::Schema::Parameter';
+  key schema => (isa => 'Swagger::Schema::Schema', required => 1);
+}
+
+package Swagger::Schema::OtherParameter {
+  use MooseX::DataModel;
+  extends 'Swagger::Schema::Parameter';
+
+  key type => (isa => 'Swagger::Schema::ParameterTypes', required => 1);
+  key format => (isa => 'Str');
+  key allowEmptyValue => (isa => 'Bool');
+  #array items
+  key collectionFormat => (isa => 'Str');
+  key default => (isa => 'Any');
+  key maximum => (isa => 'Int');
+  key exclusiveMaximum => (isa => 'Int');
+  key minimum => (isa => 'Int');
+  key exclusiveMinumum => (isa => 'Int');
+  key maxLength => (isa => 'Int');
+  key minLength => (isa => 'Int');
+  key pattern => (isa => 'Str');
+  key maxItems => (isa => 'Int');
+  key minItems => (isa => 'Int');
+  key uniqueItems => (isa => 'Bool');
+  array enum => (isa => 'Any');
+  key multipleOf => (isa => 'Num');
+  #x-^ patterned fields
+
+  no MooseX::DataModel;
 }
 
 package Swagger::Schema::Operation {
@@ -47,8 +136,8 @@ package Swagger::Schema::Operation {
   key operationId => (isa => 'Str');
   key consumes => (isa => 'Str'); #Must be a Mime Type
   key produces => (isa => 'Str'); #Must be a Mime Type
-  #key parameters => 
-  #key responses => (
+  array parameters => (isa => 'Swagger::Schema::Parameter');
+  #key responses => (isa => 'Swagger::Schema::Response');
   key schemes => (isa => 'Str');
   key deprecated => (isa => 'Bool');
   #key security => (isa =>
