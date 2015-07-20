@@ -3,8 +3,10 @@ use Moose::Util::TypeConstraints;
 coerce 'Swagger::Schema::Parameter',
   from 'HashRef',
    via {
-     if ($_->{ in } eq 'body') {
+     if      ($_->{ in } eq 'body') {
        return Swagger::Schema::BodyParameter->new($_);
+     } elsif ($_->{ '$ref' }) {
+       return Swagger::Schema::RefParameter->new($_);
      } else {
        return Swagger::Schema::OtherParameter->new($_);
      }
@@ -20,9 +22,9 @@ package Swagger::Schema {
   array schemes => (isa => enum([ 'http', 'https', 'ws', 'wss']));
   array consumes => (isa => 'Str'); #Str must be mime type: https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#mimeTypes
   array produces => (isa => 'Str');
-  key paths => (isa => 'Swagger::Schema::Path', required => 1);
+  object paths => (isa => 'Swagger::Schema::Path', required => 1);
   object definitions => (isa => 'Swagger::Schema::Schema');
-  key parameters => (isa => 'Swagger::Schema::Parameter');
+  object parameters => (isa => 'Swagger::Schema::Parameter');
   #key responses => (isa => 'Swagger::Schema::Response');
   #key securityDefinitions => (isa => 'Swagger::Schema::Security');
   #key security => (isa => 'ArrayRef[Str]');
@@ -92,6 +94,12 @@ package Swagger::Schema::Parameter {
   key in => (isa => 'Str');
   key description => (isa => 'Str');
   key required => (isa => 'Bool');
+}
+
+package Swagger::Schema::RefParameter {
+  use MooseX::DataModel;
+  extends 'Swagger::Schema::Parameter';
+  key '$ref' => (isa => 'Str');
 }
 
 package Swagger::Schema::BodyParameter {
