@@ -1,13 +1,56 @@
 #!/usr/bin/perl
 
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
+package Swagger::CodeGen {
+  use Moose;
+  with 'MooseX::Getopt';
+
+  has definition => (
+    is => 'ro', 
+    isa => 'Str',
+    required => 1,
+    documentation => 'The file that contains the Swagger definition file'
+  );
+  has template => (
+    is => 'ro',
+    isa => 'Str',
+    required => 1,
+    documentation => 'The template module to use',
+  );
+}
+
+use Module::Runtime qw/require_module/;
 use Swagger::Schema;
 use File::Slurp;
 
-my $file = shift or die "Usage: $0 JSON_FILE TEMPLATE";
-my $template = shift or die "Usage: $0 JSON_FILE TEMPLATE";
 
-my $json = read_file($file);
-my $model = Swagger::Schema->new_from_json($json);
+my $options = Swagger::CodeGen->new_with_options;
+
+my $gen_module = "Swagger::Generator::" . $options->template;
+require_module($gen_module);
+
+use JSON;
+my $json = decode_json(read_file($options->definition));
+$json = subst_bools_for_tf($json);
+my $model = Swagger::Schema->new($json);
+
+my $generator = $gen_module->new(swagger => $model);
+$generator->process;
 
 use Data::Printer;
 p $model;
+
+sub subst_bools_for_tf {
+  my $elem = shift;
+  if (ref($elem) eq 'ARRAY') {
+    return [ map { subst_bools_for_tf($_) } @$elem ];
+  } elsif (ref($elem) eq 'HASH') {
+    return { map { ( $_ => subst_bools_for_tf($elem->{ $_ }) ) } keys %$elem }
+  } elsif (ref($elem) and $elem->isa('JSON::XS::Boolean')) {
+    return $elem == 1;
+  } else {
+    return $elem;
+  }
+}
