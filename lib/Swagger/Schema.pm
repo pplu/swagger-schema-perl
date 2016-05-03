@@ -3,7 +3,7 @@ use Moose::Util::TypeConstraints;
 coerce 'Swagger::Schema::Parameter',
   from 'HashRef',
    via {
-     if      ($_->{ in } eq 'body') {
+     if      (exists $_->{ in } and $_->{ in } eq 'body') {
        return Swagger::Schema::BodyParameter->new($_);
      } elsif ($_->{ '$ref' }) {
        return Swagger::Schema::RefParameter->new($_);
