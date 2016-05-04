@@ -101,7 +101,7 @@ package Swagger::Schema::Parameter {
 package Swagger::Schema::RefParameter {
   use MooseX::DataModel;
   extends 'Swagger::Schema::Parameter';
-  key '$ref' => (isa => 'Str');
+  key 'ref' => (isa => 'Str', location => '$ref');
 }
 
 package Swagger::Schema::BodyParameter {
