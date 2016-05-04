@@ -13,6 +13,8 @@ coerce 'Swagger::Schema::Parameter',
    };
 
 package Swagger::Schema {
+  our $VERSION = '0.01';
+  #ABSTRACT: Object model for Swagger schema files
   use MooseX::DataModel;
 
   key swagger => (isa => enum([ '2.0' ]), required => 1);
