@@ -54,7 +54,7 @@ package Swagger::Schema::Tag {
 }
 
 enum 'Swagger::Schema::ParameterTypes',
-     [qw/string number integer boolean array file/];
+     [qw/string number integer boolean array file object/];
 
 package Swagger::Schema::Schema {
   use MooseX::DataModel;
