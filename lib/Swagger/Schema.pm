@@ -27,7 +27,7 @@ package Swagger::Schema {
   object paths => (isa => 'Swagger::Schema::Path', required => 1);
   object definitions => (isa => 'Swagger::Schema::Schema');
   object parameters => (isa => 'Swagger::Schema::Parameter');
-  #key responses => (isa => 'Swagger::Schema::Response');
+  object responses => (isa => 'Swagger::Schema::Response');
   #key securityDefinitions => (isa => 'Swagger::Schema::Security');
   #key security => (isa => 'ArrayRef[Str]');
   array tags => (isa => 'Swagger::Schema::Tag');
@@ -147,7 +147,7 @@ package Swagger::Schema::Operation {
   key consumes => (isa => 'Str'); #Must be a Mime Type
   key produces => (isa => 'Str'); #Must be a Mime Type
   array parameters => (isa => 'Swagger::Schema::Parameter');
-  #key responses => (isa => 'Swagger::Schema::Response');
+  object responses => (isa => 'Swagger::Schema::Response');
   key schemes => (isa => 'Str');
   key deprecated => (isa => 'Bool');
   #key security => (isa =>
