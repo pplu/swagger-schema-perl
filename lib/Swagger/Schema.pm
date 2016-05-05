@@ -81,7 +81,10 @@ package Swagger::Schema::Schema {
   key multipleOf => (isa => 'Num');
   #x-^ patterned fields
 
-  key items => (isa => 'Str');
+  key items => (isa => 'Swagger::Schema::Schema');
+  #allOf
+  object properties => (isa => 'Swagger::Schema::Schema');
+  #additionalProperties
   key readOnly => (isa => 'Bool');
   #key xml => (isa => 'Swagger::Schema::XML');
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');
@@ -183,6 +186,8 @@ package Swagger::Schema::Header {
   key uniqueItems => (isa => 'Bool');
   array enum => (isa => 'Any');
   key multipleOf => (isa => 'Num');
+
+  no MooseX::DataModel;
 }
 
 package Swagger::Schema::ExternalDocumentation {
