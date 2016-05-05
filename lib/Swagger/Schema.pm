@@ -160,7 +160,7 @@ package Swagger::Schema::Operation {
 package Swagger::Schema::Response {
   use MooseX::DataModel;
   key description => (isa => 'Str');
-  key schema => (isa => 'HashRef');
+  key schema => (isa => 'Swagger::Schema::Parameter');
   object headers => (isa => 'Swagger::Schema::Header');
   #key examples => (isa => '');
   #TODO: patterned fields  
