@@ -156,8 +156,33 @@ package Swagger::Schema::Operation {
 
 package Swagger::Schema::Response {
   use MooseX::DataModel;
-  #key default => (isa =>
+  key description => (isa => 'Str');
+  key schema => (isa => 'HashRef');
+  object headers => (isa => 'Swagger::Schema::Header');
+  #key examples => (isa => '');
   #TODO: patterned fields  
+}
+
+package Swagger::Schema::Header {
+  use MooseX::DataModel;
+  key description => (isa => 'Str');
+  key type => (isa => 'Str', required => 1);
+  key format => (isa => 'Str');
+  object items => (isa => 'HashRef');
+  key collectionFormat => (isa => 'Str');
+  key default => (isa => 'Any');
+  key maximum => (isa => 'Int');
+  key exclusiveMaximum => (isa => 'Int');
+  key minimum => (isa => 'Int');
+  key exclusiveMinumum => (isa => 'Int');
+  key maxLength => (isa => 'Int');
+  key minLength => (isa => 'Int');
+  key pattern => (isa => 'Str');
+  key maxItems => (isa => 'Int');
+  key minItems => (isa => 'Int');
+  key uniqueItems => (isa => 'Bool');
+  array enum => (isa => 'Any');
+  key multipleOf => (isa => 'Num');
 }
 
 package Swagger::Schema::ExternalDocumentation {
