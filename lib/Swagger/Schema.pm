@@ -147,8 +147,8 @@ package Swagger::Schema::Operation {
   key description => (isa => 'Str');
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');
   key operationId => (isa => 'Str');
-  key consumes => (isa => 'Str'); #Must be a Mime Type
-  key produces => (isa => 'Str'); #Must be a Mime Type
+  array consumes => (isa => 'Str'); #Must be a Mime Type
+  array produces => (isa => 'Str'); #Must be a Mime Type
   array parameters => (isa => 'Swagger::Schema::Parameter');
   object responses => (isa => 'Swagger::Schema::Response');
   key schemes => (isa => 'Str');
