@@ -1,0 +1,5 @@
+0.02 Fri Sep 16 2016 
+ - Work on supporting more of the Swagger spec
+ - swagger-codegen with a DumpSchema generator
+0.01 Wed May 11 20:33:31 2016 +0000
+- First version
