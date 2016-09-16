@@ -5,6 +5,7 @@ requires 'Template';
 requires 'Template::Plugin::Dumper';
 requires 'Moose';
 requires 'Path::Class';
+requires 'Data::Printer';
 
 on develop => sub {
   requires 'Dist::Zilla';
