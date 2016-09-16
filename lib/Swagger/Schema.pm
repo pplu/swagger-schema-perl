@@ -13,7 +13,7 @@ coerce 'Swagger::Schema::Parameter',
    };
 
 package Swagger::Schema {
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
   #ABSTRACT: Object model for Swagger schema files
   use MooseX::DataModel;
 
@@ -28,11 +28,32 @@ package Swagger::Schema {
   object definitions => (isa => 'Swagger::Schema::Schema');
   object parameters => (isa => 'Swagger::Schema::Parameter');
   object responses => (isa => 'Swagger::Schema::Response');
-  #key securityDefinitions => (isa => 'Swagger::Schema::Security');
-  #key security => (isa => 'ArrayRef[Str]');
+  object securityDefinitions => (isa => 'Swagger::Schema::SecurityScheme');
+  # The below declaration is declared as Any, because there is no way to represent
+  # any array of hashrefs of strings
+  #array security => (isa => 'Swagger::Schema::SecurityRequirement');
+  array security => (isa => 'Any');
   array tags => (isa => 'Swagger::Schema::Tag');
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');    
 }
+
+package Swagger::Schema::SecurityScheme {
+  use MooseX::DataModel;
+
+  
+
+  no MooseX::DataModel;
+}
+
+#package Swagger::Schema::SecurityRequirement {
+#  use MooseX::DataModel;
+#
+#  # See the security attribute in Swagger::Schema
+#  # this object is more like a plain hashref
+#  # it only has a patterned field {name}, which holds an array of strings
+#
+#  no MooseX::DataModel;
+#}
 
 package Swagger::Schema::Path {
   use MooseX::DataModel;
@@ -43,7 +64,7 @@ package Swagger::Schema::Path {
   key options => (isa => 'Swagger::Schema::Operation');
   key head => (isa => 'Swagger::Schema::Operation');
   key patch => (isa => 'Swagger::Schema::Operation');
-  #array parameters => (isa => 'Swagger::Schema::Parameter|Swagger::Schema::Ref');
+  array parameters => (isa => 'Swagger::Schema::Parameter');
 }
 
 package Swagger::Schema::Tag {
@@ -64,7 +85,6 @@ package Swagger::Schema::Schema {
   key type => (isa => 'Swagger::Schema::ParameterTypes');
   key format => (isa => 'Str');
   key allowEmptyValue => (isa => 'Bool');
-  #array items
   key collectionFormat => (isa => 'Str');
   key default => (isa => 'Any');
   key maximum => (isa => 'Int');
@@ -82,9 +102,9 @@ package Swagger::Schema::Schema {
   #x-^ patterned fields
 
   key items => (isa => 'Swagger::Schema::Schema');
-  #allOf
+  array allOf => (isa => 'Swagger::Schema::Schema');
   object properties => (isa => 'Swagger::Schema::Schema');
-  #additionalProperties
+  object additionalProperties => (isa => 'Any');
   key readOnly => (isa => 'Bool');
   #key xml => (isa => 'Swagger::Schema::XML');
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');
@@ -104,7 +124,7 @@ package Swagger::Schema::Parameter {
 package Swagger::Schema::RefParameter {
   use MooseX::DataModel;
   extends 'Swagger::Schema::Parameter';
-  key 'ref' => (isa => 'Str', location => '$ref');
+  key ref => (isa => 'Str', location => '$ref');
 }
 
 package Swagger::Schema::BodyParameter {
@@ -120,13 +140,43 @@ package Swagger::Schema::OtherParameter {
   key type => (isa => 'Swagger::Schema::ParameterTypes', required => 1);
   key format => (isa => 'Str');
   key allowEmptyValue => (isa => 'Bool');
-  #array items
+  array items => (isa => 'Swagger::Schema::Item');
   key collectionFormat => (isa => 'Str');
   key default => (isa => 'Any');
   key maximum => (isa => 'Int');
   key exclusiveMaximum => (isa => 'Int');
   key minimum => (isa => 'Int');
   key exclusiveMinumum => (isa => 'Int');
+  key maxLength => (isa => 'Int');
+  key minLength => (isa => 'Int');
+  key pattern => (isa => 'Str');
+  key maxItems => (isa => 'Int');
+  key minItems => (isa => 'Int');
+  key uniqueItems => (isa => 'Bool');
+  array enum => (isa => 'Any');
+  key multipleOf => (isa => 'Num');
+  #x-^ patterned fields
+
+  no MooseX::DataModel;
+}
+
+enum 'Swagger::Schema::CollectionFormat',
+     [qw/csv ssv tsv pipes/];
+
+package Swagger::Schema::Item {
+  use MooseX::DataModel;
+
+  key type => (isa => 'Swagger::Schema::ParameterTypes', required => 1);
+  key format => (isa => 'Str');
+  
+  array items => (isa => 'Swagger::Schema::Item');
+
+  key collectionFormat => (isa => 'Swagger::Schema::CollectionFormat');
+  key default => (isa => 'Any');
+  key maximum => (isa => 'Num');
+  key exclusiveMaximum => (isa => 'Bool');
+  key minimum => (isa => 'Num');
+  key exclusiveMinimum => (isa => 'Bool');
   key maxLength => (isa => 'Int');
   key minLength => (isa => 'Int');
   key pattern => (isa => 'Str');
