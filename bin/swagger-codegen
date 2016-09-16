@@ -32,7 +32,8 @@ my $gen_module = "Swagger::Generator::" . $options->template;
 require_module($gen_module);
 
 use JSON;
-my $json = decode_json(read_file($options->definition));
+my $content = read_file($options->definition);
+my $json = decode_json($content);
 $json = subst_bools_for_tf($json);
 my $model = Swagger::Schema->new($json);
 
