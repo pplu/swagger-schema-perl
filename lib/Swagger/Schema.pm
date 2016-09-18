@@ -162,7 +162,7 @@ package Swagger::Schema::OtherParameter {
   key type => (isa => 'Swagger::Schema::ParameterTypes', required => 1);
   key format => (isa => 'Str');
   key allowEmptyValue => (isa => 'Bool');
-  array items => (isa => 'Swagger::Schema::Item');
+  object items => (isa => 'Any');
   key collectionFormat => (isa => 'Str');
   key default => (isa => 'Any');
   key maximum => (isa => 'Int');
