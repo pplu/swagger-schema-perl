@@ -81,6 +81,7 @@ package Swagger::Schema::Schema {
   use MooseX::DataModel;
 
   key ref => (isa => 'Str', location => '$ref');
+  key x_ms_client_flatten => (isa => 'Bool', location => 'x-ms-client-flatten');
 
   key type => (isa => 'Swagger::Schema::ParameterTypes');
   key format => (isa => 'Str');
@@ -119,6 +120,27 @@ package Swagger::Schema::Parameter {
   key in => (isa => 'Str');
   key description => (isa => 'Str');
   key required => (isa => 'Bool');
+  key x_ms_client_flatten => (isa => 'Bool', location => 'x-ms-client-flatten');
+  key x_ms_skip_url_encoding => (isa => 'Bool', location => 'x-ms-skip-url-encoding');
+  key x_ms_enum => (isa => 'Swagger::Schema::MSX::Enum', location => 'x-ms-enum');
+  key x_ms_parameter_grouping => (isa => 'Swagger::Schema::MSX::ParameterGrouping', location => 'x-ms-parameter-grouping');
+  key x_ms_client_request_id  => (isa => 'Bool', location => 'x-ms-client-request-id');
+  key x_ms_client_name => (isa => 'Str', location => 'x-ms-client-name');
+  key x_ms_parameter_location => (isa => 'Str', location => 'x-ms-parameter-location');
+}
+
+package Swagger::Schema::MSX::ParameterGrouping {
+  use MooseX::DataModel;
+  key name => (isa => 'Str');
+  key postfix => (isa => 'Str');
+  no MooseX::DataModel;
+}
+
+package Swagger::Schema::MSX::Enum {
+  use MooseX::DataModel;
+  key name => (isa => 'Str');
+  key modelAsString => (isa => 'Bool');
+  no MooseX::DataModel;
 }
 
 package Swagger::Schema::RefParameter {
