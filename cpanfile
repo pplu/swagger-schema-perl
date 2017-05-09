@@ -1,12 +1,8 @@
 requires 'MooseX::DataModel';
-requires 'MooseX::Getopt';
-requires 'File::Slurp';
-requires 'Template';
-requires 'Template::Plugin::Dumper';
-requires 'Moose';
-requires 'Path::Class';
-requires 'Data::Printer';
-
+on test => sub {
+  requires 'File::Slurp';
+  requires 'Test::More';
+}
 on develop => sub {
   requires 'Dist::Zilla';
   requires 'Dist::Zilla::Plugin::Prereqs::FromCPANfile';
