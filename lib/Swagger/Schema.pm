@@ -13,7 +13,7 @@ coerce 'Swagger::Schema::Parameter',
    };
 
 package Swagger::Schema {
-  our $VERSION = '1.00';
+  our $VERSION = '1.01';
   #ABSTRACT: Object model for Swagger schema files
   use MooseX::DataModel;
 
