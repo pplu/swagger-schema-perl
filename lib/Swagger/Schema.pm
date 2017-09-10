@@ -89,9 +89,9 @@ package Swagger::Schema::Schema {
   key collectionFormat => (isa => 'Str');
   key default => (isa => 'Any');
   key maximum => (isa => 'Int');
-  key exclusiveMaximum => (isa => 'Int');
+  key exclusiveMaximum => (isa => 'Bool');
   key minimum => (isa => 'Int');
-  key exclusiveMinumum => (isa => 'Int');
+  key exclusiveMinumum => (isa => 'Bool');
   key maxLength => (isa => 'Int');
   key minLength => (isa => 'Int');
   key pattern => (isa => 'Str');
@@ -166,9 +166,9 @@ package Swagger::Schema::OtherParameter {
   key collectionFormat => (isa => 'Str');
   key default => (isa => 'Any');
   key maximum => (isa => 'Int');
-  key exclusiveMaximum => (isa => 'Int');
+  key exclusiveMaximum => (isa => 'Bool');
   key minimum => (isa => 'Int');
-  key exclusiveMinumum => (isa => 'Int');
+  key exclusiveMinumum => (isa => 'Bool');
   key maxLength => (isa => 'Int');
   key minLength => (isa => 'Int');
   key pattern => (isa => 'Str');
@@ -247,9 +247,9 @@ package Swagger::Schema::Header {
   key collectionFormat => (isa => 'Str');
   key default => (isa => 'Any');
   key maximum => (isa => 'Int');
-  key exclusiveMaximum => (isa => 'Int');
+  key exclusiveMaximum => (isa => 'Bool');
   key minimum => (isa => 'Int');
-  key exclusiveMinumum => (isa => 'Int');
+  key exclusiveMinumum => (isa => 'Bool');
   key maxLength => (isa => 'Int');
   key minLength => (isa => 'Int');
   key pattern => (isa => 'Str');
