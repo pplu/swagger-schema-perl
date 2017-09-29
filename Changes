@@ -1,3 +1,5 @@
+1.02 2017 Sept 18
+ - additionalProperties is a Swagger::Schema object (as per https://github.com/OAI/OpenAPI-Specification/issues/668)
 1.01 2017 Sept 6
  - exclusiveMaximum and exclusiveMinimum were declared 
    as Ints, when in reality they are Bool as per the spec

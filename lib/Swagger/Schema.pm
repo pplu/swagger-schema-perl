@@ -13,7 +13,7 @@ coerce 'Swagger::Schema::Parameter',
    };
 
 package Swagger::Schema {
-  our $VERSION = '1.01';
+  our $VERSION = '1.02';
   #ABSTRACT: Object model for Swagger schema files
   use MooseX::DataModel;
 
@@ -105,7 +105,7 @@ package Swagger::Schema::Schema {
   key items => (isa => 'Swagger::Schema::Schema');
   array allOf => (isa => 'Swagger::Schema::Schema');
   object properties => (isa => 'Swagger::Schema::Schema');
-  object additionalProperties => (isa => 'Any');
+  key additionalProperties => (isa => 'Swagger::Schema::Schema');
   key readOnly => (isa => 'Bool');
   #key xml => (isa => 'Swagger::Schema::XML');
   key externalDocs => (isa => 'Swagger::Schema::ExternalDocumentation');
@@ -223,7 +223,7 @@ package Swagger::Schema::Operation {
   array produces => (isa => 'Str'); #Must be a Mime Type
   array parameters => (isa => 'Swagger::Schema::Parameter');
   object responses => (isa => 'Swagger::Schema::Response');
-  key schemes => (isa => 'Str');
+  array schemes => (isa => 'Str');
   key deprecated => (isa => 'Bool');
   #key security => (isa =>
   #TODO: x-^ fields  
