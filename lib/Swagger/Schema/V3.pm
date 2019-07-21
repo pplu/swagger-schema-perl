@@ -3,6 +3,7 @@ use Moose::Util::TypeConstraints;
 subtype 'Swagger::Schema::V3::SecurityRequirement', as 'ArrayRef[Str]';
 
 subtype 'Swagger::Schema::V3::RefOrSchema', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Schema';
+subtype 'Swagger::Schema::V3::RefOrSchemaOrBool', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Schema|Bool';
 subtype 'Swagger::Schema::V3::RefOrResponse', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Response';
 subtype 'Swagger::Schema::V3::RefOrPath', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Path';
 subtype 'Swagger::Schema::V3::RefOrHeader', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Header';
@@ -19,6 +20,19 @@ coerce 'Swagger::Schema::V3::RefOrSchema',
        return Swagger::Schema::V3::Schema->new($_);
      }
    };
+
+coerce 'Swagger::Schema::V3::RefOrSchemaOrBool',
+  from 'HashRef',
+   via {
+     if (ref($_) && $_->{ '$ref' }) {
+       return Swagger::Schema::V3::Ref->new($_);
+     } elsif (ref($_)) {
+       return Swagger::Schema::V3::Schema->new($_);
+     } else {
+         return $_;
+     }
+   };
+
 
 coerce 'Swagger::Schema::V3::RefOrResponse',
   from 'HashRef',
@@ -186,7 +200,7 @@ package Swagger::Schema::V3::Schema {
   key not => (isa => 'Swagger::Schema::V3::RefOrSchema');
   key items => (isa => 'Swagger::Schema::V3::RefOrSchema');
   object properties => (isa => 'Swagger::Schema::V3::RefOrSchema');
-  key additionalProperties => (isa => 'Swagger::Schema::V3::RefOrSchema');
+  key additionalProperties => (isa => 'Swagger::Schema::V3::RefOrSchemaOrBool'); # https://github.com/OAI/OpenAPI-Specification/pull/894
   key description => (isa => 'Str');
   key format => (isa => 'Str');
  
