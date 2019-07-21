@@ -1,7 +1,5 @@
 use Moose::Util::TypeConstraints;
 
-subtype 'Swagger::Schema::V3::SecurityRequirement', as 'ArrayRef[Str]';
-
 subtype 'Swagger::Schema::V3::RefOrSchema', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Schema';
 subtype 'Swagger::Schema::V3::RefOrSchemaOrBool', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Schema|Bool';
 subtype 'Swagger::Schema::V3::RefOrResponse', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Response';
@@ -104,7 +102,7 @@ package Swagger::Schema::V3 {
   array servers => (isa => 'Swagger::Schema::V3::Server');
   object paths => (isa => 'Swagger::Schema::V3::Path', required => 1);
   key components => (isa => 'Swagger::Schema::V3::Components');
-  object security => (isa => 'Swagger::Schema::V3::SecurityRequirement');
+  array security => (isa => 'Swagger::Schema::V3::Ref');
   array tags => (isa => 'Swagger::Schema::V3::Tag');
   key externalDocs => (isa => 'Swagger::Schema::V3::ExternalDocumentation');    
 }
@@ -315,7 +313,7 @@ package Swagger::Schema::V3::Operation {
   object callbacks => (isa => 'Swagger::Schema::V3::RefOrPath');
   key deprecated => (isa => 'Bool');
 
-  object security => (isa => 'Swagger::Schema::V3::SecurityRequirement');
+  array security => (isa => 'Swagger::Schema::V3::Ref');
   array servers => (isa => 'Swagger::Schema::V3::Server'); 
 }
 
