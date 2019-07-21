@@ -200,7 +200,7 @@ package Swagger::Schema::V3::Schema {
   key not => (isa => 'Swagger::Schema::V3::RefOrSchema');
   key items => (isa => 'Swagger::Schema::V3::RefOrSchema');
   object properties => (isa => 'Swagger::Schema::V3::RefOrSchema');
-  key additionalProperties => (isa => 'Swagger::Schema::V3::RefOrSchemaOrBool'); # https://github.com/OAI/OpenAPI-Specification/pull/894
+  key additionalProperties => (isa => 'Swagger::Schema::V3::RefOrSchemaOrBool');
   key description => (isa => 'Str');
   key format => (isa => 'Str');
  
