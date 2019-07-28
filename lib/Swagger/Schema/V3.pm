@@ -9,6 +9,8 @@ subtype 'Swagger::Schema::V3::RefOrLink', as 'Swagger::Schema::V3::Ref|Swagger::
 subtype 'Swagger::Schema::V3::RefOrRequestBody', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::RequestBody';
 subtype 'Swagger::Schema::V3::RefOrParameter', as 'Swagger::Schema::V3::Ref|Swagger::Schema::V3::Parameter';
 
+
+
 coerce 'Swagger::Schema::V3::RefOrSchema',
   from 'HashRef',
    via {
@@ -102,9 +104,9 @@ package Swagger::Schema::V3 {
   array servers => (isa => 'Swagger::Schema::V3::Server');
   object paths => (isa => 'Swagger::Schema::V3::Path', required => 1);
   key components => (isa => 'Swagger::Schema::V3::Components');
-  array security => (isa => 'Swagger::Schema::V3::Ref');
+  array security => (isa => 'HashRef');
   array tags => (isa => 'Swagger::Schema::V3::Tag');
-  key externalDocs => (isa => 'Swagger::Schema::V3::ExternalDocumentation');    
+  key externalDocs => (isa => 'Swagger::Schema::V3::ExternalDocumentation');
 }
 
 package Swagger::Schema::V3::Tag {
@@ -113,7 +115,7 @@ package Swagger::Schema::V3::Tag {
 
   key name => (isa => 'Str', required => 1);
   key description => (isa => 'Str');
-  key externalDocs => (isa => 'Swagger::Schema::V3::ExternalDocumentation');    
+  key externalDocs => (isa => 'Swagger::Schema::V3::ExternalDocumentation');
 }
 
 package Swagger::Schema::V3::Components {
@@ -126,7 +128,7 @@ package Swagger::Schema::V3::Components {
   #object examples => (isa => 'Swagger::Schema::V3::RefOr');
   object requestBodies => (isa => 'Swagger::Schema::V3::RefOrRequestBody');
   object headers => (isa => 'Swagger::Schema::V3::RefOrHeader');
-  #object securitySchemes => (isa => 'Swagger::Schema::V3::RefOr');
+  object securitySchemes => (isa => 'Swagger::Schema::V3::SecurityScheme');
   object links => (isa => 'Swagger::Schema::V3::RefOrLink');
   #object callbacks => (isa => 'Swagger::Schema::V3::RefOr');
 }
@@ -146,7 +148,7 @@ package Swagger::Schema::V3::ServerVariable {
 
   array enum => (isa => 'Str');
   key default => (isa => 'Str', required => 1);
-  key description => (isa => 'Str'); 
+  key description => (isa => 'Str');
 }
 
 package Swagger::Schema::V3::Path {
@@ -166,11 +168,23 @@ package Swagger::Schema::V3::Path {
 
   array servers => (isa => 'Swagger::Schema::V3::Server');
 
-  array parameters => (isa => 'Swagger::Schema::Parameter');
+  array parameters => (isa => 'Swagger::Schema::V3::Parameter');
 }
 
-enum 'Swagger::Schema::ParameterTypes',
+enum 'Swagger::Schema::V3::ParameterTypes',
      [qw/string number integer boolean array file object/];
+
+enum 'Swagger::Schema::V3::SecurityParameterTypes',
+     [qw/http apiKey openIdConnect oauth2/];
+
+package Swagger::Schema::V3::SecurityScheme {
+  use MooseX::DataModel;
+  use namespace::autoclean;
+
+  key type => (isa => 'Swagger::Schema::V3::SecurityParameterTypes', required => 1);
+  key scheme => (isa => 'Str');
+}
+
 
 package Swagger::Schema::V3::Schema {
   use MooseX::DataModel;
@@ -191,7 +205,7 @@ package Swagger::Schema::V3::Schema {
   array required => (isa => 'Str');
   array enum => (isa => 'Any');
 
-  key type => (isa => 'Swagger::Schema::ParameterTypes');
+  key type => (isa => 'Swagger::Schema::V3::ParameterTypes');
   array allOf => (isa => 'Swagger::Schema::V3::RefOrSchema');
   array oneOf => (isa => 'Swagger::Schema::V3::RefOrSchema');
   array anyOf => (isa => 'Swagger::Schema::V3::RefOrSchema');
@@ -201,12 +215,12 @@ package Swagger::Schema::V3::Schema {
   key additionalProperties => (isa => 'Swagger::Schema::V3::RefOrSchemaOrBool');
   key description => (isa => 'Str');
   key format => (isa => 'Str');
- 
+
   key nullable => (isa => 'Bool');
   key discriminator => (isa => 'Swagger::Schema::V3::Discriminator');
   key readOnly => (isa => 'Bool');
   key writeOnly => (isa => 'Bool');
-  #key xml => (isa => 'Swagger::Schema::XML');
+  #key xml => (isa => 'Swagger::Schema::V3::XML');
   key externalDocs => (isa => 'Swagger::Schema::V3::ExternalDocumentation');
   key example => (isa => 'Any');
   key deprecated => (isa => 'Bool');
@@ -233,7 +247,7 @@ package Swagger::Schema::V3::ParameterBase {
   key style => (isa => 'Str');
   key explode => (isa => 'Bool');
   key allowReserved => (isa => 'Bool');
-  
+
   key schema => (isa => 'Swagger::Schema::V3::RefOrSchema');
 
   key example => (isa => 'Any');
@@ -313,8 +327,8 @@ package Swagger::Schema::V3::Operation {
   object callbacks => (isa => 'Swagger::Schema::V3::RefOrPath');
   key deprecated => (isa => 'Bool');
 
-  array security => (isa => 'Swagger::Schema::V3::Ref');
-  array servers => (isa => 'Swagger::Schema::V3::Server'); 
+  array security => (isa => 'HashRef');
+  array servers => (isa => 'Swagger::Schema::V3::Server');
 }
 
 package Swagger::Schema::V3::Link {
@@ -376,6 +390,7 @@ package Swagger::Schema::V3::Contact {
   key url => (isa => 'Str');
   key email => (isa => 'Str');
 }
+
 ### main pod documentation begin ###
 
 =encoding UTF-8
@@ -404,8 +419,8 @@ Get programmatic access to an OpenAPI V3 file.
 =head1 OBJECT MODEL
 
 The object model is defined with L<MooseX::DataModel>. Take a look at the
-C<lib/Swagger/Schema/V3.pm> file or the swagger spec 
-L<https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md> 
+C<lib/Swagger/Schema/V3.pm> file or the swagger spec
+L<https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md>
 to know what you can find inside the objects
 
 =head1 SEE ALSO
@@ -430,5 +445,5 @@ Please report bugs to: https://github.com/pplu/swagger-schema-perl/issues
 
 Copyright (c) 2015 by CAPSiDE
 
-This code is distributed under the Apache 2 License. The full text of the 
+This code is distributed under the Apache 2 License. The full text of the
 license can be found in the LICENSE file included with this module.
