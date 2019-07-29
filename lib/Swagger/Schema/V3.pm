@@ -416,6 +416,8 @@ Swagger::Schema::V3 - Object access to OpenAPI V3 schema files
 
 Get programmatic access to an OpenAPI V3 file.
 
+If you're trying to parse a V2 file, take a look at L<Swagger::Schema>
+
 =head1 OBJECT MODEL
 
 The object model is defined with L<MooseX::DataModel>. Take a look at the

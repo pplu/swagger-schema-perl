@@ -337,7 +337,9 @@ Swagger::Schema - Object access to Swagger / OpenAPI schema files
 
 =head1 DESCRIPTION
 
-Get programmatic access to a Swagger / OpenAPI file.
+Get programmatic access to a Swagger / OpenAPI file (version 2).
+
+If you're looking for OpenAPI 3 support, take a look at: L<Swagger::Schema::V3>
 
 =head1 OBJECT MODEL
 
