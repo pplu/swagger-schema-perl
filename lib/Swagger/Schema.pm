@@ -360,6 +360,10 @@ L<http://swagger.io>
     CAPSiDE
     jlmartinez@capside.com
 
+=head1 THANKS
+
+Andrew Solomon for contributions to the V3 Swagger code
+
 =head1 BUGS and SOURCE
 
 The source code is located here: https://github.com/pplu/swagger-schema-perl
